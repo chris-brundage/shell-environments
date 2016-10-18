@@ -1,1 +1,1 @@
-My personal bashrc and profile.ps1
+Various shell environment scripts for the operating systems I use.
