@@ -1,1 +1,1 @@
-Various shell environment scripts for the operating systems I use.
+Environment config files for the various operating systems I use.
