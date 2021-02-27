@@ -1,4 +1,20 @@
+# Change PS1 to include virtualenv name, mimicking the deprecated behavior in pyenv
+# https://github.com/pyenv/pyenv-virtualenv/issues/268
+function pyenv_ps1 {
+    python_version=$(pyenv version | awk 'BEGIN { NR==1; } {print $1}')
+    if [[ "${python_version}" != "system" ]]; then
+        export PS1="(${python_version}) ${PS1}"
+    fi
+}
+
 export PS1="\[\033[0;37m\]\u@\h\[\033[0;32m\] \w \$\[\033[00m\] "
+# Dynamically update PS1 to include a pyenv virtualenv, if present
+if command -v pyenv >/dev/null; then
+    export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+    export -f pyenv_ps1
+    export PROMPT_COMMAND='pyenv_ps1'
+fi
+
 export CLICOLOR=1
 
 shopt -s histappend
@@ -7,12 +23,37 @@ alias ls='ls -a'
 alias ll='ls -ahl'
 alias rm='rm -i'
 
+# Add tailf on macOS
+if [ $(uname -s | tr [A-Z] [a-z]) == "darwin" ]
+then
+    alias tailf='tail -f'
+fi
+
+if [ -d ~/bin ]
+then
+    export PATH="${HOME}/bin:${PATH}"
+fi
+
 case "$TERM" in
 xterm*|rxvt*)
-    PS1="\[\e]0;\u@\h: \w\a\]$PS1"
+    PS1="\[\e]0;\h: \w\a\]$PS1"
     ;;
 *)
     ;;
 esac
 
-export PIP_REQUIRE_VIRTUALENV=true
+if [ -d /usr/local/opt/mysql@5.7/bin ] 
+then
+    export PATH="$PATH:/usr/local/opt/mysql@5.7/bin"
+fi
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+
+# OpenJDK - For compilers to find openjdk you may need to set:
+# export CPPFLAGS="-I/usr/local/opt/openjdk/include"
+
+export CLOUDSDK_PYTHON=python3
